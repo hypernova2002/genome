@@ -9,16 +9,22 @@ module Genome
       resources = {}
 
       resource.templates.each do |template_name, template|
-        parameters = evaluate_parameters(template[:parameters])
+        properties = evaluate_properties(template[:properties])
 
         dependencies = template[:dependencies]
 
-        resource_template = template[:klass].new(template_name, parameters, dependencies)
+        resource_template = template[:klass].new(template_name, properties, dependencies)
 
         resources.merge!(resource_template.to_h)
       end
 
-      generate_document(resources: resources, description: resource.description)
+      parameters = {}
+
+      resource.parameters.each do |_parameter_name, parameter|
+        parameters.merge!(parameter.to_h)
+      end
+
+      generate_document(resources: resources, parameters: parameters, description: resource.description)
     end
 
     def self.generate_document(metadata: {}, description: nil, resources: {}, parameters: {}, outputs: {})
@@ -32,27 +38,27 @@ module Genome
       }
     end
 
-    def self.evaluate_parameters(parameters)
-      # TODO: convert classes and helper functions into appropriate parameters
-      processed_parameters = {}
+    def self.evaluate_properties(properties)
+      # TODO: convert classes and helper functions into appropriate properties
+      processed_properties = {}
 
-      parameters.each do |parameter_name, parameter_value|
-        processed_parameters[parameter_name] = evaluate_parameter_value(parameter_value)
+      properties.each do |properties_name, properties_value|
+        processed_properties[properties_name] = evaluate_properties_value(properties_value)
       end
 
-      processed_parameters
+      processed_properties
     end
 
-    def self.evaluate_parameter_value(parameter_value)
-        case parameter_value
+    def self.evaluate_properties_value(properties_value)
+        case properties_value
         when Array
-          parameter_value.map do |single_parameter_value|
-            evaluate_parameter_value(single_parameter_value)
+          properties_value.map do |single_properties_value|
+            evaluate_properties_value(single_properties_value)
           end
         when Genome::Reference
-          { Ref: parameter_value.reference_name }
+          { Ref: properties_value.reference_name }
         else
-          parameter_value
+          properties_value
         end
     end
 

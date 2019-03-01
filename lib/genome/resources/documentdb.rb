@@ -11,6 +11,62 @@ module Genome
     class DocumentDB
       include Resource
 
+      parameter :DocumentDBMasterUsername,
+        Default: 'master',
+        NoEcho: "true",
+        Description: "The database admin account username",
+        Type: "String",
+        MinLength: "1",
+        MaxLength: "16",
+        AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*",
+        ConstraintDescription: "Must begin with a letter and contain only alphanumeric characters."
+
+      parameter :DocumentDBMasterPassword,
+        Default: 'anotverysecurepassword9876',
+        NoEcho: "true",
+        Description: "The database admin account password",
+        Type: "String",
+        MinLength: "1",
+        MaxLength: "41",
+        AllowedPattern: "[a-zA-Z0-9]+",
+        ConstraintDescription: "Must contain only alphanumeric characters."
+
+      parameter :DocumentDBSubnetGroupName,
+        Default: 'documentdb-subnet-group',
+        Description: "Subnet group name",
+        Type: "String",
+        MinLength: "1",
+        MaxLength: "64",
+        AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*",
+        ConstraintDescription: "Must begin with a letter and contain only alphanumeric characters."
+
+      parameter :DocumentDBParameterGroupName,
+        Default: 'documentdb-parameter-group',
+        Description: "Parameter group name",
+        Type: "String",
+        MinLength: "1",
+        MaxLength: "64",
+        AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*",
+        ConstraintDescription: "Must begin with a letter and contain only alphanumeric characters."
+
+      parameter :DocumentDBClusterIdentifier,
+        Default: 'documentdb-cluster',
+        Description: "Cluster identifier",
+        Type: "String",
+        MinLength: "1",
+        MaxLength: "64",
+        AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*",
+        ConstraintDescription: "Must begin with a letter and contain only alphanumeric characters."
+
+      parameter :DocumentDBInstanceIdentifier,
+        Default: 'documentdb-instance',
+        Description: "Instance identifier",
+        Type: "String",
+        MinLength: "1",
+        MaxLength: "64",
+        AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*",
+        ConstraintDescription: "Must begin with a letter and contain only alphanumeric characters."
+
       template :DocumentDBEC2SVPC, Core::Templates::EC2VPC,
         CidrBlock: '10.50.0.0/16',
         EnableDnsSupport: true,
@@ -54,7 +110,7 @@ module Genome
 
       template :DocumentDBSubnetGroup, Core::Templates::DocumentDBSubnetGroup,
         DBSubnetGroupDescription: 'Maintained by Genome: Default DocumentDB Subnet Group',
-        DBSubnetGroupName: 'documentdb-cluster',
+        DBSubnetGroupName: reference(:DocumentDBSubnetGroupName),
         SubnetIds: [
           reference(:DocumentDBEC2SubnetUSEast1A),
           reference(:DocumentDBEC2SubnetUSEast1B),
@@ -71,9 +127,9 @@ module Genome
 
       template :DocumentDBInstance, Core::Templates::DocumentDBInstance,
         AutoMinorVersionUpgrade: true,
-        DBClusterIdentifier: 'documentdb-cluster',
+        DBClusterIdentifier: reference(:DocumentDBClusterIdentifier),
         DBInstanceClass: :'db.r4.large',
-        DBInstanceIdentifier: 'documentdb-instance',
+        DBInstanceIdentifier: reference(:DocumentDBInstanceIdentifier),
         Tags: [
           { Key: :Resource, Value: :DocumentDBCluster }
         ],
@@ -84,7 +140,7 @@ module Genome
       template :DocumentDBParameterGroup, Core::Templates::DocumentDBParameterGroup,
         Description: 'Maintained by Genome: Default DocumentDB Parameter Group',
         Family: 'docdb3.6',
-        Name: 'documentdb-parameter-group',
+        Name: reference(:DocumentDBParameterGroupName),
         Parameters: {
           audit_logs: :enabled,
           tls: :enabled,
@@ -95,11 +151,11 @@ module Genome
         ]
 
       template :DocumentDBCluster, Core::Templates::DocumentDBCluster,
-        DBClusterIdentifier: 'documentdb-cluster',
-        DBClusterParameterGroupName: 'documentdb-parameter-group',
-        DBSubnetGroupName: 'documentdb-cluster',
-        MasterUsername: 'master',
-        MasterUserPassword: 'anotverysecurepassword9876',
+        DBClusterIdentifier: reference(:DocumentDBClusterIdentifier),
+        DBClusterParameterGroupName: reference(:DocumentDBParameterGroupName),
+        DBSubnetGroupName: reference(:DocumentDBSubnetGroupName),
+        MasterUsername: reference(:DocumentDBMasterUsername),
+        MasterUserPassword: reference(:DocumentDBMasterPassword),
         StorageEncrypted: true,
         Tags: [
           { Key: :Resource, Value: :DocumentDBCluster }
