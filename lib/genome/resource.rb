@@ -14,7 +14,7 @@ module Genome
       class_attribute :templates, default: {}
       class_attribute :parameters, default: {}
       class_attribute :references, default: []
-      class_attribute :description
+      class_attribute :resource_description
     end
 
     module ClassMethods
@@ -33,6 +33,10 @@ module Genome
       def remove_template(template_name)
         templates.delete(template_name)
         remove_dependencies(template_name)
+      end
+
+      def description(description)
+        @resource_description = description
       end
 
       def parameter(parameter_name, parameter_options = {})

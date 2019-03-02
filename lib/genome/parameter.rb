@@ -10,14 +10,10 @@ module Genome
       Description: { type: :string },
       MaxLength: { type: :integer },
       MaxValue: { type: :integer },
-      MaxValue: { type: :integer },
       MinLength: { type: :integer },
       MinValue: { type: :integer },
       NoEcho: { type: :boolean },
       Type: { type: :string },
-      NoEcho: { type: :boolean },
-      NoEcho: { type: :boolean },
-      NoEcho: { type: :boolean }
     }.freeze
 
     attr_reader :parameter_name

@@ -176,19 +176,29 @@ module Genome
         remove_template(:DocumentDBEC2SubnetUSEast1C)
       end
 
+      def self.disable_tls
+        templates[:DocumentDBParameterGroup][:properties][:Parameters].merge!(
+          tls: :disabled
+        )
+      end
+
       def self.subnet_ids(subnet_ids)
-        templates[:DocumentDBSubnetGroup][:parameters][:SubnetIds] = subnet_ids
+        templates[:DocumentDBSubnetGroup][:properties].merge!(
+          SubnetIds: subnet_ids
+        )
       end
 
       def self.security_group_ids(security_group_ids)
-        templates[:DocumentDBCluster][:parameters][:VpcSecurityGroupIds] = security_group_ids
+        templates[:DocumentDBCluster][:properties].merge!(
+          VpcSecurityGroupIds: security_group_ids
+        )
       end
 
       def self.add_cluster_dependencies(*dependencies)
-        cluster_dependencies = templates[:DocumentDBCluster][:parameters][:DependsOn] || []
+        cluster_dependencies = templates[:DocumentDBCluster][:properties][:DependsOn] || []
         cluster_dependencies += dependencies
 
-        templates[:DocumentDBCluster][:parameters][:DependsOn] = cluster_dependencies
+        templates[:DocumentDBCluster][:properties][:DependsOn] = cluster_dependencies
       end
     end
   end

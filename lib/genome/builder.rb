@@ -24,7 +24,7 @@ module Genome
         parameters.merge!(parameter.to_h)
       end
 
-      generate_document(resources: resources, parameters: parameters, description: resource.description)
+      generate_document(resources: resources, parameters: parameters, description: resource.resource_description)
     end
 
     def self.generate_document(metadata: {}, description: nil, resources: {}, parameters: {}, outputs: {})
