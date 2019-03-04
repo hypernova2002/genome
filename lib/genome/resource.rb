@@ -51,6 +51,19 @@ module Genome
         parameters[parameter_name].parameter_options.merge!(parameter_options)
       end
 
+      def shared_tags(*tags)
+        templates.each do |template_name, template|
+          tag(template_name, *tags) if template[:klass].property_configs.key?(:Tags)
+        end
+      end
+
+      def tag(template_name, *tags)
+        template = templates[template_name]
+
+        template[:properties][:Tags] ||= []
+        template[:properties][:Tags].concat(tags)
+      end
+
       def remove_dependencies(*dependencies)
         templates.each do |template_name, template_parameters|
           dependencies.each do |dependency|
