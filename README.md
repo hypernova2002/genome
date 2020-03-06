@@ -25,8 +25,8 @@ Or install it yourself as:
 For a quick start setting up a stack, you can use the built in resources. Simply create a stack class, which includes a resource and then build your stack. This recommended only for testing, as the resources may be updated, causing your stack to change.
 
 ```ruby
-require_relative 'lib/genome/resources/documentdb'
-require_relative 'lib/genome/stack'
+require 'genome/resources/documentdb'
+require 'genome/stack'
 
 class TestStack
   include Genome::Stack
@@ -43,8 +43,8 @@ TestStack.build
 Alternatively, you can inherit a resource in order to configure the resource for your needs, without having to build from scratch. The following prevents a new vpc and subnets from being created, so you can configure DocumentDB to use your existing subnets.
 
 ```ruby
-require_relative 'lib/genome/resources/documentdb'
-require_relative 'lib/genome/stack'
+require 'genome/resources/documentdb'
+require 'genome/stack'
 
 class MyResource < Genome::Resources::DocumentDB
   disable_vpc
@@ -77,9 +77,9 @@ For production environments we recommend that you configure your own resources, 
 Templates define the core configuration needed to generate a basic AWS resource, such as an ec2_instance. Resources can configure a set of templates and define dependency chains for each template. The following creates a basic SQS Queue with a security group
 
 ```ruby
-require_relative '../resource'
-require_relative '../core/templates/ec2_security_group'
-require_relative '../core/templates/sqs_queue'
+require 'genome/resource'
+require 'genome/core/templates/ec2_security_group'
+require 'genome/core/templates/sqs_queue'
 
 class SQSQueue
   include Resource
