@@ -16,6 +16,7 @@ module Genome
     included do
       class_attribute :capabilities, default: [:CAPABILITY_IAM, :CAPABILITY_NAMED_IAM]
       class_attribute :resources, default: []
+      class_attribute :parameterised_resources, default: []
       class_attribute :template_url
       class_attribute :disable_rollback
       class_attribute :rollback_configuration
@@ -52,8 +53,20 @@ module Genome
         resources << resource_klass
       end
 
+      def parameterised_resource(resource_klass, *params)
+        @parameterised_resources << resource_klass.new(params)
+      end
+
       def cloudformation_client
         @cloudformation_client ||= Aws::CloudFormation::Client.new
+      end
+
+      def build_parameterised_resource
+        parameterised_resources.each do |parameterised_resource|
+          if parameterised_resources.access_from
+            parameterised_resources.security_groups
+          end
+        end
       end
 
       def build

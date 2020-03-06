@@ -6,6 +6,8 @@ module Genome
       class ElastiCacheReplicationGroup
         include Base
 
+        DEFAULT_PORT = 6379
+
         aws_template 'AWS::ElastiCache::ReplicationGroup'
 
         property :AtRestEncryptionEnabled
